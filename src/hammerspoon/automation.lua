@@ -17,6 +17,7 @@ local emailAccounts = {
 		name = "Personal Mail",
 		description = "Summarize top 20 unread from personal inbox",
 		url = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
+
 		badge = "Personal"
 	},
 	{
