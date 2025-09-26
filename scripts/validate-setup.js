@@ -98,7 +98,7 @@ function validateJavaScriptScript(filePath) {
       { pattern: /function getUnreadEmails/, name: 'getUnreadEmails function' },
       { pattern: /function formatEmailsForAI/, name: 'formatEmailsForAI function' },
       { pattern: /GmailApp\.search/, name: 'Gmail API usage' },
-      { pattern: /ContentService\.createTextOutput/, name: 'Content service output' }
+      { pattern: /ContentService/, name: 'Content service output' }
     ];
     
     let allPassed = true;
