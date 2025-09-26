@@ -9,7 +9,7 @@ A professional-grade automation system that seamlessly integrates Gmail with Per
 - **Automatic Perplexity integration** - opens new chat and pastes content
 - **Smart email filtering** - fetches top 20 unread emails
 - **Clean text formatting** - optimized for AI processing
-- **Dual account support** - separate personal and work email handling
+- **Multi-account support** - unlimited email accounts (personal, work, client, newsletter, etc.)
 - **Enterprise-ready architecture** - scalable and maintainable codebase
 
 ## 📋 Prerequisites
@@ -31,33 +31,58 @@ cd gmail-perplexity-integration
 
 ### Step 2: Set Up Google Apps Script
 
-#### For Personal Emails:
+#### For Each Email Account:
 1. Go to [Google Apps Script](https://script.google.com/)
-2. Create a new project
-3. Copy the contents of `src/apps-script/personal-gmail-summarizer.js`
-4. Save the project (e.g., "Personal Gmail Summarizer")
+2. Create a new project for each email account
+3. Choose the appropriate script:
+   - **Personal/Work**: Use `src/apps-script/personal-gmail-summarizer.js` or `src/apps-script/work-gmail-summarizer.js`
+   - **Additional accounts**: Use `src/apps-script/template-gmail-summarizer.js` and customize it
+4. Save the project with a descriptive name (e.g., "Personal Gmail Summarizer")
 5. Deploy as web app:
    - Click "Deploy" → "New deployment"
    - Choose "Web app" as type
    - Set execute permissions to "Anyone"
    - Copy the web app URL
 
-#### For Work Emails:
-1. Repeat the above steps using `src/apps-script/work-gmail-summarizer.js`
-2. Name it "Work Gmail Summarizer"
-3. Deploy and copy the web app URL
+#### Adding More Email Accounts:
+1. Copy `src/apps-script/template-gmail-summarizer.js`
+2. Customize the `ACCOUNT_CONFIG` section with your account details
+3. Create a new Google Apps Script project
+4. Paste the customized code
+5. Deploy and get the web app URL
+6. Add the new account to your Hammerspoon configuration
 
 ### Step 3: Configure Hammerspoon
 
 1. Open Hammerspoon
 2. Click "Open Config" to open the configuration directory
 3. Copy `src/hammerspoon/automation.lua` to your Hammerspoon config directory
-4. Edit the URLs in the script:
+4. Edit the email accounts configuration in the script:
 
 ```lua
-local urls = {
-    personal = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
-    work = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
+local emailAccounts = {
+    {
+        id = "personal",
+        name = "Personal Mail",
+        description = "Summarize top 20 unread from personal inbox",
+        url = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
+        badge = "Personal"
+    },
+    {
+        id = "work",
+        name = "Work Mail",
+        description = "Summarize top 20 unread from work inbox",
+        url = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
+        badge = "Work"
+    },
+    -- Add more accounts here as needed
+    -- {
+    --     id = "client",
+    --     name = "Client Mail",
+    --     description = "Summarize top 20 unread from client inbox",
+    --     url = "YOUR_CLIENT_APPS_SCRIPT_URL_HERE",
+    --     badge = "Client"
+    -- }
 }
 ```
 
@@ -122,8 +147,9 @@ gmail-perplexity-integration/
 - **Easy customization** - Modify the hotkey in the configuration file
 
 ### Interface Options
-- **Personal Mail** - Fetches and summarizes personal Gmail inbox
-- **Work Mail** - Fetches and summarizes work Gmail inbox
+- **Dynamic account selection** - UI automatically adapts to your configured email accounts
+- **Unlimited accounts** - Add as many email accounts as needed (personal, work, client, newsletter, etc.)
+- **Customizable display** - Each account can have custom names, descriptions, and badges
 
 ### What Happens Next
 1. Script fetches your top 20 unread emails
@@ -166,6 +192,27 @@ mod.key = "p"
 
 **Available modifier keys:** `"ctrl"`, `"alt"`, `"cmd"`, `"shift"`
 **Available keys:** Any letter, number, or function key (e.g., `"f12"`, `"space"`, `"return"`)
+
+### Adding Multiple Email Accounts
+
+To add more email accounts:
+
+1. **Create additional Apps Script projects** using the template
+2. **Add new account configurations** to the `emailAccounts` table in the Hammerspoon script
+3. **The UI automatically adapts** to show all configured accounts
+4. **No code changes needed** - just configuration updates
+
+Example adding a client account:
+```lua
+-- Add this to your emailAccounts table
+{
+    id = "client",
+    name = "Client Mail",
+    description = "Summarize top 20 unread from client inbox",
+    url = "YOUR_CLIENT_APPS_SCRIPT_URL_HERE",
+    badge = "Client"
+}
+```
 
 ### Changing Output Format
 Modify the `formatEmailsForAI()` function in the Apps Script files to customize how emails are formatted for AI processing.

@@ -62,13 +62,14 @@ function validateLuaScript(filePath) {
     
     // Check for required components
     const checks = [
-      { pattern: /local urls = \{/, name: 'URLs configuration' },
-      { pattern: /personal = "/, name: 'Personal URL' },
-      { pattern: /work = "/, name: 'Work URL' },
+      { pattern: /local emailAccounts = \{/, name: 'Email accounts configuration' },
+      { pattern: /id = "personal"/, name: 'Personal account configuration' },
+      { pattern: /id = "work"/, name: 'Work account configuration' },
       { pattern: /mod\.hyper = \{/, name: 'Hotkey configuration' },
       { pattern: /mod\.key = "/, name: 'Hotkey key' },
       { pattern: /hs\.http\.asyncGet/, name: 'HTTP request functionality' },
-      { pattern: /hs\.application\.launchOrFocus/, name: 'App launching functionality' }
+      { pattern: /hs\.application\.launchOrFocus/, name: 'App launching functionality' },
+      { pattern: /for _, account in ipairs\(emailAccounts\)/, name: 'Dynamic account iteration' }
     ];
     
     let allPassed = true;
@@ -144,11 +145,13 @@ function main() {
   allChecksPassed &= checkFile('src/hammerspoon/automation.lua', 'Hammerspoon automation script');
   allChecksPassed &= checkFile('src/apps-script/personal-gmail-summarizer.js', 'Personal Gmail script');
   allChecksPassed &= checkFile('src/apps-script/work-gmail-summarizer.js', 'Work Gmail script');
+  allChecksPassed &= checkFile('src/apps-script/template-gmail-summarizer.js', 'Template Gmail script');
   
   // Check documentation
   log('\n📚 Documentation:', 'blue');
   allChecksPassed &= checkFile('docs/setup-guide.md', 'Setup guide');
   allChecksPassed &= checkFile('docs/troubleshooting.md', 'Troubleshooting guide');
+  allChecksPassed &= checkFile('docs/multi-account-setup.md', 'Multi-account setup guide');
   
   // Validate script content
   log('\n🔍 Script Validation:', 'blue');

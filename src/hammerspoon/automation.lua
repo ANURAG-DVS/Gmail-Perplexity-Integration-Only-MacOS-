@@ -9,9 +9,38 @@ local sexyView = nil
 local projectPath = os.getenv("HOME") .. "/Documents/Gmail + Perplexity"
 local outputFile = projectPath .. "/output.txt"
 
-local urls = {
-	personal = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
-	work = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
+-- Email account configuration
+-- Add as many accounts as needed
+local emailAccounts = {
+	{
+		id = "personal",
+		name = "Personal Mail",
+		description = "Summarize top 20 unread from personal inbox",
+		url = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
+		badge = "Personal"
+	},
+	{
+		id = "work",
+		name = "Work Mail", 
+		description = "Summarize top 20 unread from work inbox",
+		url = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
+		badge = "Work"
+	},
+	-- Add more accounts here as needed
+	-- {
+	-- 	id = "client",
+	-- 	name = "Client Mail",
+	-- 	description = "Summarize top 20 unread from client inbox", 
+	-- 	url = "YOUR_CLIENT_APPS_SCRIPT_URL_HERE",
+	-- 	badge = "Client"
+	-- },
+	-- {
+	-- 	id = "newsletter",
+	-- 	name = "Newsletter Mail",
+	-- 	description = "Summarize top 20 unread from newsletter inbox",
+	-- 	url = "YOUR_NEWSLETTER_APPS_SCRIPT_URL_HERE", 
+	-- 	badge = "News"
+	-- }
 }
 
 local function writeToFile(path, text)
@@ -55,16 +84,24 @@ local function focusPerplexityAndPaste(text)
 	end)
 end
 
-local function runFlow(kind)
-	local url = urls[kind]
-	if not url then
-		notify("Gmail + Perplexity", "Invalid selection")
+local function runFlow(accountId)
+	-- Find the account configuration
+	local account = nil
+	for _, acc in ipairs(emailAccounts) do
+		if acc.id == accountId then
+			account = acc
+			break
+		end
+	end
+	
+	if not account then
+		notify("Gmail + Perplexity", "Invalid account selection")
 		return
 	end
 
-	notify("Gmail + Perplexity", "Fetching " .. kind .. " unread emails…")
+	notify("Gmail + Perplexity", "Fetching " .. account.name .. " unread emails…")
 
-	hs.http.asyncGet(url, nil, function(status, body, headers)
+	hs.http.asyncGet(account.url, nil, function(status, body, headers)
 		if status ~= 200 or not body or #body == 0 then
 			notify("Fetch failed", "Status: " .. tostring(status))
 			return
@@ -89,13 +126,19 @@ local function buildChooser()
 		runFlow(choice.id)
 	end)
 
-	chooser:choices({
-		{ text = "Personal Mail", subText = "Run Apps Script for personal inbox", id = "personal" },
-		{ text = "Work Mail",     subText = "Run Apps Script for work inbox",     id = "work" },
-	})
+	-- Build choices dynamically from email accounts
+	local choices = {}
+	for _, account in ipairs(emailAccounts) do
+		table.insert(choices, {
+			text = account.name,
+			subText = account.description,
+			id = account.id
+		})
+	end
 
+	chooser:choices(choices)
 	chooser:width(30)
-	chooser:rows(3)
+	chooser:rows(math.min(#emailAccounts + 1, 10)) -- Dynamic rows based on account count
 	chooser:placeholderText("Select mailbox to summarize…")
 end
 
@@ -119,8 +162,33 @@ local function showSexyChooser()
 		closeSexyView()
 	end
 
-	local rect = centerRect(720, 420)
-	local html = [[
+	-- Calculate dynamic dimensions based on number of accounts
+	local accountCount = #emailAccounts
+	local gridColumns = accountCount <= 2 and 2 or math.ceil(accountCount / 2)
+	local gridRows = math.ceil(accountCount / gridColumns)
+	
+	local width = math.max(720, 360 * gridColumns + 80) -- Minimum 720px, scale with columns
+	local height = math.max(420, 220 * gridRows + 200) -- Minimum 420px, scale with rows
+	
+	local rect = centerRect(width, height)
+	
+	-- Generate dynamic HTML based on email accounts
+	local gridCSS = string.format("grid-template-columns: repeat(%d, 1fr);", gridColumns)
+	
+	-- Generate account cards HTML
+	local cardsHTML = ""
+	for i, account in ipairs(emailAccounts) do
+		cardsHTML = cardsHTML .. string.format([[
+						<a class="card" href="hs://select/%s">
+							<div class="badge">%s</div>
+							<h2>%s</h2>
+							<p>%s</p>
+							<div class="accent"></div>
+						</a>]], 
+			account.id, account.badge, account.name, account.description)
+	end
+	
+	local html = string.format([[
 		<!doctype html>
 		<html>
 		<head>
@@ -137,18 +205,18 @@ local function showSexyChooser()
 					--text: #e6e8ef;
 					--muted: #a8adbd;
 				}
-				html,body { height:100%; }
+				html,body { height:100%%; }
 				body {
 					margin:0; font-family:-apple-system, system-ui, "SF Pro", Inter, Segoe UI, Roboto, sans-serif;
-					background: radial-gradient(1000px 600px at 10% -10%, rgba(124,92,255,0.22), transparent 60%),
-						radial-gradient(800px 500px at 100% 0%, rgba(0,212,255,0.2), transparent 50%),
-						linear-gradient(180deg, #0f1115 0%, #0b0d12 100%);
+					background: radial-gradient(1000px 600px at 10%% -10%%, rgba(124,92,255,0.22), transparent 60%%),
+						radial-gradient(800px 500px at 100%% 0%%, rgba(0,212,255,0.2), transparent 50%%),
+						linear-gradient(180deg, #0f1115 0%%, #0b0d12 100%%);
 					color: var(--text);
 					-webkit-user-select: none; user-select: none;
 				}
-				.wrapper { height:100%; display:flex; align-items:center; justify-content:center; padding: 24px; }
+				.wrapper { height:100%%; display:flex; align-items:center; justify-content:center; padding: 24px; }
 				.panel {
-					width: 680px; padding: 24px 24px 28px; border-radius: 16px;
+					width: %dpx; padding: 24px 24px 28px; border-radius: 16px;
 					background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
 					border: 1px solid var(--border);
 					box-shadow: 0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08);
@@ -157,7 +225,7 @@ local function showSexyChooser()
 				.header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 18px; }
 				.title { font-weight: 700; letter-spacing: 0.2px; }
 				.kbd { opacity: 0.9; color: var(--muted); font-size: 12px; }
-				.grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+				.grid { display:grid; %s gap:16px; }
 				.card {
 					position: relative; border-radius: 14px; padding: 20px; height: 200px;
 					background: var(--card);
@@ -177,9 +245,9 @@ local function showSexyChooser()
 				.card h2 { margin: 8px 0 6px; font-size: 20px; }
 				.card p { margin: 0; color: var(--muted); }
 				.accent {
-					position:absolute; inset:auto -20% -40% -20%; height: 60%;
-					background: radial-gradient(60% 70% at 50% 100%, rgba(124,92,255,0.35), transparent 60%),
-						radial-gradient(50% 60% at 80% 100%, rgba(0,212,255,0.30), transparent 60%);
+					position:absolute; inset:auto -20%% -40%% -20%%; height: 60%%;
+					background: radial-gradient(60%% 70%% at 50%% 100%%, rgba(124,92,255,0.35), transparent 60%%),
+						radial-gradient(50%% 60%% at 80%% 100%%, rgba(0,212,255,0.30), transparent 60%%);
 					filter: blur(22px); opacity: 0.9; pointer-events:none;
 				}
 				.footer { margin-top: 18px; display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size: 12px; }
@@ -195,18 +263,7 @@ local function showSexyChooser()
 						<div class="kbd">ctrl ⌃  option ⌥  cmd ⌘  Y</div>
 					</div>
 					<div class="grid">
-						<a class="card" href="hs://select/personal">
-							<div class="badge">Personal</div>
-							<h2>Personal Mail</h2>
-							<p>Summarize top 20 unread from personal inbox.</p>
-							<div class="accent"></div>
-						</a>
-						<a class="card" href="hs://select/work">
-							<div class="badge">Work</div>
-							<h2>Work Mail</h2>
-							<p>Summarize top 20 unread from work inbox.</p>
-							<div class="accent"></div>
-						</a>
+						%s
 					</div>
 					<div class="footer">
 						<div class="tip">Esc to close • Enter selects focused card</div>
@@ -220,15 +277,15 @@ local function showSexyChooser()
 				const focusCard = () => { cards.forEach((c,i)=>c.style.outline = i===idx ? '2px solid rgba(124,92,255,0.8)' : 'none'); };
 				focusCard();
 				document.addEventListener('keydown', (e)=>{
-					if(e.key==='ArrowRight'){ idx=(idx+1)%cards.length; focusCard(); }
-					if(e.key==='ArrowLeft'){ idx=(idx+cards.length-1)%cards.length; focusCard(); }
+					if(e.key==='ArrowRight'){ idx=(idx+1)%%cards.length; focusCard(); }
+					if(e.key==='ArrowLeft'){ idx=(idx+cards.length-1)%%cards.length; focusCard(); }
 					if(e.key==='Enter'){ window.location.href = cards[idx].getAttribute('href'); }
 					if(e.key==='Escape'){ window.location.href = 'hs://close'; }
 				});
 			</script>
 		</body>
 		</html>
-	]]
+	]], width - 40, gridCSS, cardsHTML)
 
 	sexyView = hs.webview.new(rect)
 		:windowStyle({"titled","closable","nonactivating"})

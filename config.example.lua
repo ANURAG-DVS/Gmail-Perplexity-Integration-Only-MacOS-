@@ -3,11 +3,45 @@
 
 local config = {}
 
--- Google Apps Script URLs
--- Replace these with your actual deployed Apps Script URLs
-config.urls = {
-    personal = "https://script.google.com/macros/s/YOUR_PERSONAL_SCRIPT_ID/exec",
-    work = "https://script.google.com/macros/s/YOUR_WORK_SCRIPT_ID/exec",
+-- Email account configuration
+-- Add as many accounts as needed
+config.emailAccounts = {
+    {
+        id = "personal",
+        name = "Personal Mail",
+        description = "Summarize top 20 unread from personal inbox",
+        url = "https://script.google.com/macros/s/YOUR_PERSONAL_SCRIPT_ID/exec",
+        badge = "Personal"
+    },
+    {
+        id = "work",
+        name = "Work Mail",
+        description = "Summarize top 20 unread from work inbox",
+        url = "https://script.google.com/macros/s/YOUR_WORK_SCRIPT_ID/exec",
+        badge = "Work"
+    },
+    -- Add more accounts here as needed
+    -- {
+    --     id = "client",
+    --     name = "Client Mail",
+    --     description = "Summarize top 20 unread from client inbox",
+    --     url = "https://script.google.com/macros/s/YOUR_CLIENT_SCRIPT_ID/exec",
+    --     badge = "Client"
+    -- },
+    -- {
+    --     id = "newsletter",
+    --     name = "Newsletter Mail",
+    --     description = "Summarize top 20 unread from newsletter inbox",
+    --     url = "https://script.google.com/macros/s/YOUR_NEWSLETTER_SCRIPT_ID/exec",
+    --     badge = "News"
+    -- },
+    -- {
+    --     id = "sideproject",
+    --     name = "Side Project Mail",
+    --     description = "Summarize top 20 unread from side project inbox",
+    --     url = "https://script.google.com/macros/s/YOUR_SIDEPROJECT_SCRIPT_ID/exec",
+    --     badge = "Project"
+    -- }
 }
 
 -- Hotkey configuration
