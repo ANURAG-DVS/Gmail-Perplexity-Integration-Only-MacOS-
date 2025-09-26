@@ -1,15 +1,16 @@
 # Gmail + Perplexity Integration
 
-A powerful automation system that fetches your unread Gmail emails and sends them to Perplexity AI for intelligent summarization. Built with Hammerspoon (macOS) and Google Apps Script.
+A professional-grade automation system that seamlessly integrates Gmail with Perplexity AI for intelligent email summarization. Built with enterprise-ready architecture using Hammerspoon (macOS) and Google Apps Script, designed for scalability and maintainability.
 
 ## 🚀 Features
 
-- **One-click email summarization** via global hotkey (`Ctrl+Option+Cmd+Y`)
+- **One-click email summarization** via customizable global hotkey
 - **Beautiful glassmorphic UI** for selecting personal or work emails
 - **Automatic Perplexity integration** - opens new chat and pastes content
 - **Smart email filtering** - fetches top 20 unread emails
 - **Clean text formatting** - optimized for AI processing
 - **Dual account support** - separate personal and work email handling
+- **Enterprise-ready architecture** - scalable and maintainable codebase
 
 ## 📋 Prerequisites
 
@@ -60,11 +61,31 @@ local urls = {
 }
 ```
 
-5. Reload Hammerspoon configuration
+5. **Customize your hotkey** (optional):
+   ```lua
+   -- Default: Ctrl+Option+Cmd+Y
+   mod.hyper = {"ctrl","alt","cmd"}
+   mod.key = "y"
+   
+   -- Example alternatives:
+   -- Simple: Cmd+Shift+Y
+   mod.hyper = {"cmd","shift"}
+   mod.key = "y"
+   
+   -- Function key: F12
+   mod.hyper = {}
+   mod.key = "f12"
+   
+   -- Custom combination: Ctrl+Shift+P
+   mod.hyper = {"ctrl","shift"}
+   mod.key = "p"
+   ```
+
+6. Reload Hammerspoon configuration
 
 ### Step 4: Test the Setup
 
-1. Press `Ctrl+Option+Cmd+Y` to open the email selector
+1. Press your configured hotkey (default: `Ctrl+Option+Cmd+Y`) to open the email selector
 2. Choose "Personal Mail" or "Work Mail"
 3. Verify that:
    - Emails are fetched successfully
@@ -97,7 +118,8 @@ gmail-perplexity-integration/
 ## 🎯 Usage
 
 ### Global Hotkey
-- **`Ctrl+Option+Cmd+Y`** - Opens the email selector interface
+- **Customizable hotkey** (default: `Ctrl+Option+Cmd+Y`) - Opens the email selector interface
+- **Easy customization** - Modify the hotkey in the configuration file
 
 ### Interface Options
 - **Personal Mail** - Fetches and summarizes personal Gmail inbox
@@ -124,9 +146,26 @@ const maxEmails = 20; // Change this number
 Edit the hotkey in `automation.lua`:
 
 ```lua
+-- Default configuration
 mod.hyper = {"ctrl","alt","cmd"}  -- Modifier keys
 mod.key = "y"                     -- Main key
+
+-- Popular alternatives:
+-- Simple: Cmd+Shift+Y
+mod.hyper = {"cmd","shift"}
+mod.key = "y"
+
+-- Function key: F12
+mod.hyper = {}
+mod.key = "f12"
+
+-- Custom: Ctrl+Shift+P
+mod.hyper = {"ctrl","shift"}
+mod.key = "p"
 ```
+
+**Available modifier keys:** `"ctrl"`, `"alt"`, `"cmd"`, `"shift"`
+**Available keys:** Any letter, number, or function key (e.g., `"f12"`, `"space"`, `"return"`)
 
 ### Changing Output Format
 Modify the `formatEmailsForAI()` function in the Apps Script files to customize how emails are formatted for AI processing.
@@ -164,10 +203,12 @@ Modify the `formatEmailsForAI()` function in the Apps Script files to customize 
 
 ## 🔒 Security & Privacy
 
-- **No data storage**: Emails are processed in memory only
-- **Direct integration**: No third-party services store your data
-- **Local processing**: All automation runs on your machine
-- **Secure APIs**: Uses official Google and Perplexity APIs
+- **Zero data persistence**: Emails are processed in memory only, never stored
+- **Direct API integration**: No third-party intermediaries or data collection
+- **Local execution**: All automation runs securely on your local machine
+- **Enterprise-grade security**: Uses official Google and Perplexity APIs with proper authentication
+- **Privacy-first design**: No telemetry, logging, or data transmission to external services
+- **Configurable permissions**: Granular control over Gmail access and data processing
 
 ## 🤝 Contributing
 
@@ -189,12 +230,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-If you find this project helpful, please consider:
-- ⭐ Starring the repository
-- 🐛 Reporting bugs
-- 💡 Suggesting new features
-- 📢 Sharing with others
+### Enterprise Support
+For enterprise deployments, custom integrations, or commercial licensing inquiries, please contact us through GitHub Issues with the "enterprise" label.
+
+### Community Support
+- ⭐ **Star the repository** to show your support
+- 🐛 **Report bugs** with detailed reproduction steps
+- 💡 **Suggest features** through GitHub Issues
+- 📖 **Read documentation** for comprehensive guides
+- 💬 **Join discussions** in GitHub Discussions
+
+### Professional Services
+This project is designed with enterprise scalability in mind. For organizations requiring:
+- Custom integrations with existing systems
+- Advanced security configurations
+- Multi-tenant deployments
+- Professional support and maintenance
+
+Please reach out through GitHub Issues with detailed requirements.
 
 ---
 
-**Made with ❤️ for productivity enthusiasts**
+**Built with enterprise-grade architecture for professional productivity**

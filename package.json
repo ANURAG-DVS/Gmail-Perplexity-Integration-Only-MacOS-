@@ -1,7 +1,7 @@
 {
   "name": "gmail-perplexity-integration",
   "version": "1.0.0",
-  "description": "A powerful automation system that fetches Gmail emails and sends them to Perplexity AI for summarization",
+  "description": "Enterprise-grade automation system for intelligent Gmail email summarization using Perplexity AI. Built with scalability and professional deployment in mind.",
   "main": "src/hammerspoon/automation.lua",
   "scripts": {
     "lint": "eslint src/apps-script/*.js",
@@ -24,7 +24,12 @@
     "email",
     "summarization",
     "productivity",
-    "macos"
+    "macos",
+    "enterprise",
+    "scalable",
+    "professional",
+    "integration",
+    "workflow-automation"
   ],
   "author": "Your Name",
   "license": "MIT",

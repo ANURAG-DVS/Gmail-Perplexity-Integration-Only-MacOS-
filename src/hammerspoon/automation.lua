@@ -6,12 +6,12 @@ local mod = {}
 local chooser = nil
 local sexyView = nil
  
-local projectPath = "/Users/anurag/Documents/Gmail + Perplexity"
+local projectPath = os.getenv("HOME") .. "/Documents/Gmail + Perplexity"
 local outputFile = projectPath .. "/output.txt"
 
 local urls = {
-	personal = "https://script.google.com/macros/s/AKfycbzxfp0t_3kOLM9-FBPj-gQJ52tbTDIENoSzKFPbwyaZCqeh_JLOWDwzK5SpSNKAJF1R/exec",
-	work = "https://script.google.com/macros/s/AKfycbyWs1tAfC3uhyu44-Ps-Xc-gwyA0Ap-MBgbxz2y3-1RT4ApeYrauaQZHusseVOZ-69z/exec",
+	personal = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
+	work = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
 }
 
 local function writeToFile(path, text)

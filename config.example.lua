@@ -18,8 +18,8 @@ config.hotkey = {
 
 -- Project paths
 config.paths = {
-    project = "/Users/anurag/Documents/Gmail + Perplexity",
-    output = "/Users/anurag/Documents/Gmail + Perplexity/output.txt"
+    project = os.getenv("HOME") .. "/Documents/Gmail + Perplexity",
+    output = os.getenv("HOME") .. "/Documents/Gmail + Perplexity/output.txt"
 }
 
 -- Perplexity app configuration
