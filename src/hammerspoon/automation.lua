@@ -1,5 +1,5 @@
 -- Hammerspoon automation for "Gmail + Perplexity"
--- Global hotkey: control+option+command+y
+-- Global hotkey: option+command+g
 
 local mod = {}
 
@@ -9,40 +9,56 @@ local sexyView = nil
 local projectPath = os.getenv("HOME") .. "/Documents/Gmail + Perplexity"
 local outputFile = projectPath .. "/output.txt"
 
--- Email account configuration
--- Add as many accounts as needed
-local emailAccounts = {
-	{
-		id = "personal",
-		name = "Personal Mail",
-		description = "Summarize top 20 unread from personal inbox",
-		url = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
+-- Load email account configuration from config.local.lua
+local function loadEmailAccounts(showNotifications)
+	showNotifications = showNotifications ~= false -- default to true
+	local configPath = projectPath .. "/config.local.lua"
+	
+	-- Try to load the config file using dofile directly
+	local ok, config = pcall(function()
+		return dofile(configPath)
+	end)
+	
+	if not ok then
+		if showNotifications then
+			notify("Config Error", "Could not load config.local.lua: " .. tostring(config))
+		end
+		return {}
+	end
+	
+	if not config or not config.emailAccounts then
+		if showNotifications then
+			notify("Config Error", "Invalid config format in config.local.lua")
+		end
+		return {}
+	end
+	
+	return config.emailAccounts
+end
 
-		badge = "Personal"
-	},
-	{
-		id = "work",
-		name = "Work Mail", 
-		description = "Summarize top 20 unread from work inbox",
-		url = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
-		badge = "Work"
-	},
-	-- Add more accounts here as needed
-	-- {
-	-- 	id = "client",
-	-- 	name = "Client Mail",
-	-- 	description = "Summarize top 20 unread from client inbox", 
-	-- 	url = "YOUR_CLIENT_APPS_SCRIPT_URL_HERE",
-	-- 	badge = "Client"
-	-- },
-	-- {
-	-- 	id = "newsletter",
-	-- 	name = "Newsletter Mail",
-	-- 	description = "Summarize top 20 unread from newsletter inbox",
-	-- 	url = "YOUR_NEWSLETTER_APPS_SCRIPT_URL_HERE", 
-	-- 	badge = "News"
-	-- }
-}
+-- Load email accounts from config with fallback (silent during module load)
+local emailAccounts = loadEmailAccounts(false)
+
+-- Fallback configuration if config loading fails
+if #emailAccounts == 0 then
+	emailAccounts = {
+		{
+			id = "personal",
+			name = "Personal Mail",
+			description = "Summarize top 20 unread from personal inbox",
+			url = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
+			badge = "Personal"
+		},
+		{
+			id = "work",
+			name = "Work Mail", 
+			description = "Summarize top 20 unread from work inbox",
+			url = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
+			badge = "Work"
+		}
+	}
+	-- Don't show notification during module load
+end
 
 local function writeToFile(path, text)
 	local file = io.open(path, "w")
@@ -64,28 +80,51 @@ local function focusPerplexityAndPaste(text)
 	-- Copy to clipboard first
 	hs.pasteboard.setContents(text)
 
+	-- Check if Perplexity is already running
+	local perplexityApp = hs.application.get("Perplexity")
+	local wasAlreadyRunning = perplexityApp ~= nil
+
 	-- Try to launch Perplexity by name or bundle ID
 	local launched = hs.application.launchOrFocus("Perplexity")
 	if not launched then
 		hs.application.launchOrFocusByBundleID("ai.perplexity.mac")
 	end
 
-	-- Give the app a moment to focus
-	hs.timer.doAfter(0.6, function()
-		-- Try to start a new chat if available
-		hs.eventtap.keyStroke({"cmd"}, "n", 0)
+	-- Determine appropriate delay based on app state
+	local focusDelay = wasAlreadyRunning and 0.8 or 2.0
 
+	-- Give the app appropriate time to focus and load
+	hs.timer.doAfter(focusDelay, function()
+		-- Ensure we're focused on the input area by clicking in the chat area first
+		-- This works whether it's a new chat or existing chat
+		hs.eventtap.keyStroke({}, "tab", 0) -- Move focus to input area
+		
 		-- Small delay to ensure input is focused
-		hs.timer.doAfter(0.2, function()
-			hs.eventtap.keyStroke({"cmd"}, "v", 0)
+		hs.timer.doAfter(0.3, function()
+			-- Clear any existing text in the input (in case of existing chat)
+			hs.eventtap.keyStroke({"cmd"}, "a", 0)
 			hs.timer.doAfter(0.1, function()
-				hs.eventtap.keyStroke({}, "return", 0)
+				-- Paste the content
+				hs.eventtap.keyStroke({"cmd"}, "v", 0)
+				hs.timer.doAfter(0.2, function()
+					-- Send the message
+					hs.eventtap.keyStroke({}, "return", 0)
+				end)
 			end)
 		end)
 	end)
 end
 
 local function runFlow(accountId)
+	-- Reload email accounts in case config was updated
+	emailAccounts = loadEmailAccounts()
+	
+	-- Check if we have any accounts loaded
+	if #emailAccounts == 0 then
+		notify("Gmail + Perplexity", "No email accounts configured. Please check config.local.lua")
+		return
+	end
+	
 	-- Find the account configuration
 	local account = nil
 	for _, acc in ipairs(emailAccounts) do
@@ -96,7 +135,13 @@ local function runFlow(accountId)
 	end
 	
 	if not account then
-		notify("Gmail + Perplexity", "Invalid account selection")
+		notify("Gmail + Perplexity", "Invalid account selection: " .. tostring(accountId))
+		return
+	end
+	
+	-- Check if URL is properly configured
+	if not account.url or account.url:match("YOUR_.*_URL_HERE") then
+		notify("Gmail + Perplexity", "Account '" .. account.name .. "' has not been configured with a valid URL")
 		return
 	end
 
@@ -104,7 +149,7 @@ local function runFlow(accountId)
 
 	hs.http.asyncGet(account.url, nil, function(status, body, headers)
 		if status ~= 200 or not body or #body == 0 then
-			notify("Fetch failed", "Status: " .. tostring(status))
+			notify("Fetch failed", "Status: " .. tostring(status) .. " - Check your Apps Script URL")
 			return
 		end
 
@@ -122,6 +167,15 @@ end
 
 -- Classic chooser fallback (kept for reference)
 local function buildChooser()
+	-- Reload email accounts in case config was updated
+	emailAccounts = loadEmailAccounts()
+	
+	-- Check if we have any accounts loaded
+	if #emailAccounts == 0 then
+		notify("Gmail + Perplexity", "No email accounts configured. Please check config.local.lua")
+		return
+	end
+	
 	chooser = hs.chooser.new(function(choice)
 		if not choice then return end
 		runFlow(choice.id)
@@ -161,6 +215,15 @@ end
 local function showSexyChooser()
 	if sexyView then
 		closeSexyView()
+	end
+
+	-- Reload email accounts in case config was updated
+	emailAccounts = loadEmailAccounts()
+	
+	-- Check if we have any accounts loaded
+	if #emailAccounts == 0 then
+		notify("Gmail + Perplexity", "No email accounts configured. Please check config.local.lua")
+		return
 	end
 
 	-- Calculate dynamic dimensions based on number of accounts
@@ -261,7 +324,7 @@ local function showSexyChooser()
 				<div class="panel">
 					<div class="header">
 						<div class="title">Gmail + Perplexity</div>
-						<div class="kbd">ctrl ⌃  option ⌥  cmd ⌘  Y</div>
+						<div class="kbd">option ⌥  cmd ⌘  G</div>
 					</div>
 					<div class="grid">
 						%s
@@ -322,17 +385,23 @@ function mod.trigger()
 	end
 end
 
--- Bind hotkey: control+option+command+y
-mod.hyper = {"ctrl","alt","cmd"}
-mod.key = "y"
+-- Bind hotkey: option+command+g
+mod.hyper = {"alt","cmd"}
+mod.key = "g"
 
 function mod.bindHotkey()
+	-- Bind the new hotkey (this will automatically replace any existing binding)
 	hs.hotkey.bind(mod.hyper, mod.key, function()
 		mod.trigger()
 	end)
+	
+	-- Debug: Print the actual hotkey being bound
+	print("Gmail + Perplexity: Hotkey bound - " .. table.concat(mod.hyper, "+") .. "+" .. mod.key)
 end
 
 -- Auto-bind on load
 mod.bindHotkey()
 
+
 return mod
+

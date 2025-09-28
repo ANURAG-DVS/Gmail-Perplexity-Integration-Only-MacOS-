@@ -97,8 +97,8 @@ You can modify these settings in the script:
 
 ```lua
 -- Change the hotkey combination
-mod.hyper = {"ctrl","alt","cmd"}  -- Modifier keys
-mod.key = "y"                     -- Main key
+mod.hyper = {"alt","cmd"}         -- Modifier keys
+mod.key = "g"                     -- Main key
 
 -- Change the project path (if needed)
 local projectPath = "/Users/yourusername/Documents/Gmail + Perplexity"

@@ -1,301 +1,168 @@
 # Gmail + Perplexity Integration
 
-A professional-grade automation system that seamlessly integrates Gmail with Perplexity AI for intelligent email summarization. Built with enterprise-ready architecture using Hammerspoon (macOS) and Google Apps Script, designed for scalability and maintainability.
+**Turn your Gmail emails into AI summaries with one click!**
 
-## 🚀 Features
+This tool automatically fetches your unread emails and sends them to Perplexity AI for smart summarization. Perfect for busy people who want to quickly understand their email without reading everything.
 
-- **One-click email summarization** via customizable global hotkey
-- **Beautiful glassmorphic UI** for selecting personal or work emails
-- **Automatic Perplexity integration** - opens new chat and pastes content
-- **Smart email filtering** - fetches top 20 unread emails
-- **Clean text formatting** - optimized for AI processing
-- **Multi-account support** - unlimited email accounts (personal, work, client, newsletter, etc.)
-- **Enterprise-ready architecture** - scalable and maintainable codebase
+## 🎯 What This Does
 
-## 📋 Prerequisites
+1. **Press a hotkey** → Opens a beautiful email selector
+2. **Choose your email account** → Personal, Work, or any other account
+3. **Get AI summary** → Perplexity automatically opens and summarizes your emails
 
-- **macOS** (for Hammerspoon)
-- **Hammerspoon** installed ([download here](https://www.hammerspoon.org/))
-- **Google account** with Gmail access
-- **Perplexity AI** account and app installed
-- **Google Apps Script** access
+## 📋 What You Need
 
-## 🛠️ Installation & Setup
+- **Mac computer** (this only works on Mac)
+- **Gmail account** (or multiple accounts)
+- **Perplexity AI account** (free or paid)
+- **10 minutes** to set everything up
 
-### Step 1: Clone the Repository
+## 🚀 Step-by-Step Setup
 
-```bash
-git clone https://github.com/yourusername/gmail-perplexity-integration.git
-cd gmail-perplexity-integration
-```
+### Step 1: Download and Install Hammerspoon
 
-### Step 2: Set Up Google Apps Script
+1. Go to [hammerspoon.org](https://www.hammerspoon.org/)
+2. Click "Download Hammerspoon"
+3. Install it like any other Mac app
+4. Open Hammerspoon (it will appear in your menu bar)
 
-#### For Each Email Account:
-1. Go to [Google Apps Script](https://script.google.com/)
-2. Create a new project for each email account
-3. Choose the appropriate script:
-   - **Personal/Work**: Use `src/apps-script/personal-gmail-summarizer.js` or `src/apps-script/work-gmail-summarizer.js`
-   - **Additional accounts**: Use `src/apps-script/template-gmail-summarizer.js` and customize it
-4. Save the project with a descriptive name (e.g., "Personal Gmail Summarizer")
-5. Deploy as web app:
+### Step 2: Download This Project
+
+1. Click the green "Code" button on this page
+2. Click "Download ZIP"
+3. Extract the ZIP file to your Desktop
+4. Rename the folder to "Gmail + Perplexity"
+
+### Step 3: Set Up Your Email Accounts
+
+#### For Each Email Account (Personal, Work, etc.):
+
+1. **Go to Google Apps Script:**
+   - Open [script.google.com](https://script.google.com/)
+   - Sign in with your Google account
+
+2. **Create a New Project:**
+   - Click "New Project"
+   - Delete all the code in the editor
+   - Copy the code from `src/apps-script/personal-gmail-summarizer.js` (or `work-gmail-summarizer.js`)
+   - Paste it into the editor
+
+3. **Save and Deploy:**
+   - Click "Save" (Ctrl+S)
    - Click "Deploy" → "New deployment"
    - Choose "Web app" as type
-   - Set execute permissions to "Anyone"
-   - Copy the web app URL
+   - Set "Execute as" to "Me"
+   - Set "Who has access" to "Anyone"
+   - Click "Deploy"
+   - **Copy the web app URL** (you'll need this!)
 
-#### Adding More Email Accounts:
-1. Copy `src/apps-script/template-gmail-summarizer.js`
-2. Customize the `ACCOUNT_CONFIG` section with your account details
-3. Create a new Google Apps Script project
-4. Paste the customized code
-5. Deploy and get the web app URL
-6. Add the new account to your Hammerspoon configuration
+4. **Repeat for each email account** you want to use
 
-### Step 3: Configure Hammerspoon
+### Step 4: Configure the Tool
 
-1. Open Hammerspoon
-2. Click "Open Config" to open the configuration directory
-3. Copy `src/hammerspoon/automation.lua` to your Hammerspoon config directory
-4. Edit the email accounts configuration in the script:
+1. **Open the project folder** on your Desktop
+2. **Copy the example config:**
+   - Find `src/hammerspoon/config.example.lua`
+   - Copy it
+   - Paste it in the main folder
+   - Rename it to `config.local.lua`
 
-```lua
-local emailAccounts = {
-    {
-        id = "personal",
-        name = "Personal Mail",
-        description = "Summarize top 20 unread from personal inbox",
-        url = "YOUR_PERSONAL_APPS_SCRIPT_URL_HERE",
-        badge = "Personal"
-    },
-    {
-        id = "work",
-        name = "Work Mail",
-        description = "Summarize top 20 unread from work inbox",
-        url = "YOUR_WORK_APPS_SCRIPT_URL_HERE",
-        badge = "Work"
-    },
-    -- Add more accounts here as needed
-    -- {
-    --     id = "client",
-    --     name = "Client Mail",
-    --     description = "Summarize top 20 unread from client inbox",
-    --     url = "YOUR_CLIENT_APPS_SCRIPT_URL_HERE",
-    --     badge = "Client"
-    -- }
-}
-```
+3. **Edit your config:**
+   - Open `config.local.lua` in any text editor
+   - Replace `YOUR_PERSONAL_APPS_SCRIPT_URL_HERE` with your actual URL from Step 3
+   - Replace `YOUR_WORK_APPS_SCRIPT_URL_HERE` with your work URL
+   - Save the file
 
-5. **Customize your hotkey** (optional):
-   ```lua
-   -- Default: Ctrl+Option+Cmd+Y
-   mod.hyper = {"ctrl","alt","cmd"}
-   mod.key = "y"
-   
-   -- Example alternatives:
-   -- Simple: Cmd+Shift+Y
-   mod.hyper = {"cmd","shift"}
-   mod.key = "y"
-   
-   -- Function key: F12
-   mod.hyper = {}
-   mod.key = "f12"
-   
-   -- Custom combination: Ctrl+Shift+P
-   mod.hyper = {"ctrl","shift"}
-   mod.key = "p"
-   ```
+### Step 5: Connect to Hammerspoon
 
-6. Reload Hammerspoon configuration
-
-### Step 4: Test the Setup
-
-1. Press your configured hotkey (default: `Ctrl+Option+Cmd+Y`) to open the email selector
-2. Choose "Personal Mail" or "Work Mail"
-3. Verify that:
-   - Emails are fetched successfully
-   - Perplexity opens with the content
-   - The content is properly formatted
-
-## 📁 Project Structure
-
-```
-gmail-perplexity-integration/
-├── README.md                           # This file
-├── LICENSE                             # MIT License
-├── .gitignore                          # Git ignore rules
-├── src/
-│   ├── hammerspoon/
-│   │   └── automation.lua              # Main Hammerspoon automation script
-│   └── apps-script/
-│       ├── personal-gmail-summarizer.js # Personal email handler
-│       └── work-gmail-summarizer.js    # Work email handler
-├── docs/
-│   ├── setup-guide.md                  # Detailed setup instructions
-│   └── troubleshooting.md              # Common issues and solutions
-├── examples/
-│   └── output.txt                      # Sample output format
-└── .github/
-    └── workflows/
-        └── lint.yml                    # GitHub Actions for code quality
-```
-
-## 🎯 Usage
-
-### Global Hotkey
-- **Customizable hotkey** (default: `Ctrl+Option+Cmd+Y`) - Opens the email selector interface
-- **Easy customization** - Modify the hotkey in the configuration file
-
-### Interface Options
-- **Dynamic account selection** - UI automatically adapts to your configured email accounts
-- **Unlimited accounts** - Add as many email accounts as needed (personal, work, client, newsletter, etc.)
-- **Customizable display** - Each account can have custom names, descriptions, and badges
-
-### What Happens Next
-1. Script fetches your top 20 unread emails
-2. Formats them for AI processing
-3. Opens Perplexity AI
-4. Creates a new chat
-5. Pastes the formatted email content
-6. Sends the content for summarization
-
-## ⚙️ Configuration
-
-### Customizing Email Count
-Edit the `maxEmails` variable in the Apps Script files:
-
-```javascript
-const maxEmails = 20; // Change this number
-```
-
-### Modifying Hotkey
-Edit the hotkey in `automation.lua`:
+1. **Open Hammerspoon** (click the menu bar icon)
+2. **Click "Open Config"**
+3. **Replace everything** in the config file with this code:
 
 ```lua
--- Default configuration
-mod.hyper = {"ctrl","alt","cmd"}  -- Modifier keys
-mod.key = "y"                     -- Main key
-
--- Popular alternatives:
--- Simple: Cmd+Shift+Y
-mod.hyper = {"cmd","shift"}
-mod.key = "y"
-
--- Function key: F12
-mod.hyper = {}
-mod.key = "f12"
-
--- Custom: Ctrl+Shift+P
-mod.hyper = {"ctrl","shift"}
-mod.key = "p"
+-- Load the Gmail + Perplexity automation
+require("path.to.your.project.src.hammerspoon.automation")
 ```
 
-**Available modifier keys:** `"ctrl"`, `"alt"`, `"cmd"`, `"shift"`
-**Available keys:** Any letter, number, or function key (e.g., `"f12"`, `"space"`, `"return"`)
+**Important:** Replace `path.to.your.project` with the actual path to your project folder.
 
-### Adding Multiple Email Accounts
-
-To add more email accounts:
-
-1. **Create additional Apps Script projects** using the template
-2. **Add new account configurations** to the `emailAccounts` table in the Hammerspoon script
-3. **The UI automatically adapts** to show all configured accounts
-4. **No code changes needed** - just configuration updates
-
-Example adding a client account:
+**Example:** If your project is on Desktop, use:
 ```lua
--- Add this to your emailAccounts table
-{
-    id = "client",
-    name = "Client Mail",
-    description = "Summarize top 20 unread from client inbox",
-    url = "YOUR_CLIENT_APPS_SCRIPT_URL_HERE",
-    badge = "Client"
-}
+require("/Users/YourName/Desktop/Gmail + Perplexity/src/hammerspoon/automation")
 ```
 
-### Changing Output Format
-Modify the `formatEmailsForAI()` function in the Apps Script files to customize how emails are formatted for AI processing.
+4. **Save the file** (Ctrl+S)
+5. **Reload Hammerspoon** (click the menu bar icon → "Reload Config")
+
+### Step 6: Test It!
+
+1. **Press `Option + Command + G`** on your keyboard
+2. **You should see** a beautiful email selector window
+3. **Click on an email account** (Personal or Work)
+4. **Wait a few seconds** - Perplexity should open with your email summary!
+
+## 🎮 How to Use
+
+1. **Press `Option + Command + G`** anytime
+2. **Choose your email account** from the beautiful selector
+3. **Wait for the magic** - your emails get summarized automatically!
 
 ## 🔧 Troubleshooting
 
-### Common Issues
+### "Nothing happens when I press the hotkey"
+- Make sure Hammerspoon is running (check menu bar)
+- Try reloading the config in Hammerspoon
+- Check that the file path in your Hammerspoon config is correct
 
-**Hammerspoon not responding to hotkey:**
-- Check if Hammerspoon is running
-- Verify the configuration is loaded
-- Check for syntax errors in the Lua script
+### "Error loading config"
+- Make sure you created `config.local.lua` in the main project folder
+- Check that your Apps Script URLs are correct
+- Make sure you deployed your Apps Script as a web app
 
-**Apps Script returning errors:**
-- Ensure Gmail API is enabled
-- Check that the script has proper permissions
-- Verify the web app deployment settings
+### "Perplexity doesn't open"
+- Make sure Perplexity is installed on your Mac
+- Try opening Perplexity manually first
+- Check that you're signed in to Perplexity
 
-**Perplexity not opening:**
-- Ensure Perplexity app is installed
-- Check if the app name/bundle ID is correct
-- Try manually opening Perplexity first
+### "No emails are fetched"
+- Check your Apps Script URLs in `config.local.lua`
+- Make sure your Apps Script is deployed as "Anyone" can access
+- Try running your Apps Script manually in Google Apps Script
 
-**No emails being fetched:**
-- Verify Gmail access permissions
-- Check if there are actually unread emails
-- Review the search query in the Apps Script
+## 📁 File Structure
 
-### Getting Help
+```
+Gmail + Perplexity/
+├── README.md                           # This file
+├── config.local.lua                    # Your personal settings (DON'T share this!)
+├── src/
+│   ├── hammerspoon/
+│   │   ├── automation.lua              # Main automation code
+│   │   └── config.example.lua          # Template for your config
+│   └── apps-script/
+│       ├── personal-gmail-summarizer.js    # For personal emails
+│       ├── work-gmail-summarizer.js        # For work emails
+│       └── template-gmail-summarizer.js    # For other accounts
+└── docs/                               # Extra documentation
+```
 
-1. Check the [troubleshooting guide](docs/troubleshooting.md)
-2. Review the [setup guide](docs/setup-guide.md)
-3. Open an issue on GitHub
-4. Check the Hammerspoon console for error messages
+## 🔒 Privacy & Security
 
-## 🔒 Security & Privacy
+- **Your emails stay private** - they're only processed by Google Apps Script and Perplexity
+- **No data is stored** - everything is processed in real-time
+- **Your config is local** - `config.local.lua` stays on your computer
+- **Open source** - you can see exactly what the code does
 
-- **Zero data persistence**: Emails are processed in memory only, never stored
-- **Direct API integration**: No third-party intermediaries or data collection
-- **Local execution**: All automation runs securely on your local machine
-- **Enterprise-grade security**: Uses official Google and Perplexity APIs with proper authentication
-- **Privacy-first design**: No telemetry, logging, or data transmission to external services
-- **Configurable permissions**: Granular control over Gmail access and data processing
+## 🆘 Need Help?
 
-## 🤝 Contributing
+1. **Check the troubleshooting section** above
+2. **Look at the docs folder** for more detailed guides
+3. **Open an issue** on GitHub if you're still stuck
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## 🎉 You're Done!
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Hammerspoon](https://www.hammerspoon.org/) - macOS automation framework
-- [Google Apps Script](https://script.google.com/) - Gmail API integration
-- [Perplexity AI](https://www.perplexity.ai/) - AI-powered email summarization
-
-## 📞 Support
-
-### Enterprise Support
-For enterprise deployments, custom integrations, or commercial licensing inquiries, please contact us through GitHub Issues with the "enterprise" label.
-
-### Community Support
-- ⭐ **Star the repository** to show your support
-- 🐛 **Report bugs** with detailed reproduction steps
-- 💡 **Suggest features** through GitHub Issues
-- 📖 **Read documentation** for comprehensive guides
-- 💬 **Join discussions** in GitHub Discussions
-
-### Professional Services
-This project is designed with enterprise scalability in mind. For organizations requiring:
-- Custom integrations with existing systems
-- Advanced security configurations
-- Multi-tenant deployments
-- Professional support and maintenance
-
-Please reach out through GitHub Issues with detailed requirements.
+Congratulations! You now have a powerful email summarization tool that works with just one keypress. Enjoy your newfound productivity! 🚀
 
 ---
 
-**Built with enterprise-grade architecture for professional productivity**
+**Made with ❤️ for busy people who love efficiency**
