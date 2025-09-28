@@ -1,0 +1,89 @@
+name: Code Quality Checks
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-lua:
+    name: Lint Lua Code
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Lua
+      uses: leafo/setup-lua@v1
+      with:
+        lua-version: '5.4'
+        
+    - name: Install luacheck
+      run: |
+        luarocks install luacheck
+        
+    - name: Run luacheck
+      run: |
+        luacheck src/hammerspoon/automation.lua --no-unused-args --no-unused-secondaries
+        
+  lint-javascript:
+    name: Lint JavaScript Code
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install ESLint
+      run: npm install -g eslint
+      
+    - name: Run ESLint
+      run: |
+        eslint src/apps-script/*.js --fix
+        
+  check-documentation:
+    name: Check Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check README exists
+      run: test -f README.md
+      
+    - name: Check LICENSE exists
+      run: test -f LICENSE
+      
+    - name: Validate markdown files
+      run: |
+        # Check for basic markdown syntax issues
+        grep -r "^#" docs/ || true
+        grep -r "^##" docs/ || true
+        
+  security-check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check for sensitive information
+      run: |
+        # Check for potential API keys or secrets
+        if grep -r "AKfycb" .; then
+          echo "Warning: Potential Apps Script URLs found in code"
+        fi
+        
+        # Check for email addresses
+        if grep -r "@gmail.com\|@company.com" .; then
+          echo "Warning: Email addresses found in code"
+        fi

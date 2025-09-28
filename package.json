@@ -1,0 +1,47 @@
+{
+  "name": "gmail-perplexity-integration",
+  "version": "1.0.0",
+  "description": "A powerful automation system that fetches Gmail emails and sends them to Perplexity AI for summarization",
+  "main": "src/hammerspoon/automation.lua",
+  "scripts": {
+    "lint": "eslint src/apps-script/*.js",
+    "lint:fix": "eslint src/apps-script/*.js --fix",
+    "test": "echo \"No tests specified\" && exit 0",
+    "setup": "echo \"Please follow the setup guide in docs/setup-guide.md\"",
+    "validate": "node scripts/validate-setup.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/gmail-perplexity-integration.git"
+  },
+  "keywords": [
+    "gmail",
+    "perplexity",
+    "ai",
+    "automation",
+    "hammerspoon",
+    "google-apps-script",
+    "email",
+    "summarization",
+    "productivity",
+    "macos"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/gmail-perplexity-integration/issues"
+  },
+  "homepage": "https://github.com/yourusername/gmail-perplexity-integration#readme",
+  "devDependencies": {
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "src/",
+    "docs/",
+    "README.md",
+    "LICENSE"
+  ]
+}

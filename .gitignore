@@ -1,3 +1,82 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Hammerspoon
+*.lua.bak
+*.lua~
+
+# Google Apps Script
+.clasp.json
+.claspignore
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node modules (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if using any Python tools)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Output files
+output.txt
+*.output
+
+# Personal configuration files
+config.local.lua
+secrets.json
+credentials.json
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Test files
+test-output/
+*.test
+
+# Documentation build
+docs/_build/
+site/
+
 # Compiled Lua sources
 luac.out
 
@@ -38,4 +117,3 @@ luac.out
 *.i*86
 *.x86_64
 *.hex
-
