@@ -20,7 +20,7 @@ jobs:
       - name: Install deps
         run: npm ci || npm i
       - name: Run ESLint
-        run: npx eslint "src/apps-script/*.js" "src/apps-script/**/*.js" --max-warnings=0
+        run: npx eslint -c eslint.config.mjs "src/apps-script/*.js" "src/apps-script/**/*.js" --max-warnings=0
 
   luacheck:
     name: Lint Lua Code

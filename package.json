@@ -4,8 +4,8 @@
   "description": "Enterprise-grade automation system for intelligent Gmail email summarization using Perplexity AI. Built with scalability and professional deployment in mind.",
   "main": "src/hammerspoon/automation.lua",
   "scripts": {
-    "lint": "eslint src/apps-script/*.js",
-    "lint:fix": "eslint src/apps-script/*.js --fix",
+    "lint": "eslint -c eslint.config.mjs \"src/apps-script/*.js\" \"src/apps-script/**/*.js\"",
+    "lint:fix": "eslint -c eslint.config.mjs \"src/apps-script/*.js\" \"src/apps-script/**/*.js\" --fix",
     "test": "echo \"No tests specified\" && exit 0",
     "setup": "echo \"Please follow the setup guide in docs/setup-guide.md\"",
     "validate": "node scripts/validate-setup.js"

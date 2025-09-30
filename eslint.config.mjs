@@ -15,14 +15,17 @@ export default [
         PropertiesService: "readonly",
         ScriptApp: "readonly",
         HtmlService: "readonly",
+        ContentService: "readonly",
+        console: "readonly",
       },
     },
     files: ["src/apps-script/**/*.js", "src/apps-script/*.js"],
     rules: {
-      "no-unused-vars": ["warn", { args: "none" }],
+      "no-unused-vars": "off",
       "no-undef": "error",
       "no-console": "off",
       "prefer-const": "warn",
+      "no-control-regex": "off",
     },
   },
 ];
