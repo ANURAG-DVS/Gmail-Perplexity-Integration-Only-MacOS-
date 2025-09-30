@@ -38,7 +38,8 @@
   },
   "homepage": "https://github.com/yourusername/gmail-perplexity-integration#readme",
   "devDependencies": {
-    "eslint": "^8.0.0"
+    "@eslint/js": "^9.14.0",
+    "eslint": "^9.14.0"
   },
   "engines": {
     "node": ">=16.0.0"
